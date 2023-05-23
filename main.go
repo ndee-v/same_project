@@ -118,7 +118,7 @@ func main() {
 
 	file, err := os.Open(conf.filePath)
 	if err != nil {
-		log.Printf("[ERROR]: %s", err.Error())
+		log.Printf("[ERROR] Open: %s", err.Error())
 		return
 	}
 	defer file.Close()
@@ -126,7 +126,7 @@ func main() {
 	buf := &bytes.Buffer{}
 	_, err = buf.ReadFrom(file)
 	if err != nil {
-		log.Printf("[ERROR]: %s", err.Error())
+		log.Printf("[ERROR] ReadFrom: %s", err.Error())
 		return
 	}
 
