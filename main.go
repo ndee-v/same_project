@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -13,8 +12,6 @@ import (
 )
 
 const defaultLimit int = 20
-
-var errDataNotFound = errors.New("no data")
 
 type (
 	config struct {
@@ -96,20 +93,18 @@ func getConfig() *config {
 	}
 }
 
-func getSortedRawData(buf *bytes.Buffer) (rawData, error) {
+func getSortedRawData(buf *bytes.Buffer) rawData {
 	data := bytes.FieldsFunc(buf.Bytes(), func(r rune) bool {
 		return !unicode.IsLetter(r)
 	})
-	if len(data) == 0 {
-		return nil, errDataNotFound
-	}
+
 	for i := range data {
 		data[i] = bytes.ToLower(data[i])
 	}
 	sort.Slice(data, func(i, j int) bool {
 		return bytes.Compare(data[i], data[j]) < 0
 	})
-	return data, nil
+	return data
 }
 
 func main() {
@@ -130,11 +125,7 @@ func main() {
 		return
 	}
 
-	data, err := getSortedRawData(buf)
-	if err != nil {
-		log.Printf("[ERROR] getSortedRawData: %s", err.Error())
-		return
-	}
+	data := getSortedRawData(buf)
 
 	words := data.getWordList()
 
